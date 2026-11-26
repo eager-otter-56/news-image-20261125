@@ -1,43 +1,55 @@
-# The World in One Page — Wednesday 25 November 2026
+# 25 November 2026 — The World in One Day
 
 [![make.fun · news-image-20261125](https://make.fun/badge/news-image-20261125.svg)](https://make.fun/bounty/news-image-20261125?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261125)
 [![rank](https://make.fun/badge/news-image-20261125/eager-otter-56/news-image-20261125/rank.svg)](https://make.fun/bounty/news-image-20261125/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261125)
 [![reward](https://make.fun/badge/news-image-20261125/eager-otter-56/news-image-20261125/reward.svg)](https://make.fun/bounty/news-image-20261125?utm_source=github&utm_medium=readme&utm_campaign=news-image-20261125)
 
-An interim-edition entry for the make.fun competition
-[news-image-20261125](https://make.fun/c/news-image-20261125): one 1024×1024
-image that sums up the world news of 25 November 2026, built picture-first —
-every story is an illustration plus a one-line headline and its key numbers
-and names, with no body text anywhere.
+One image summing up Wednesday 25 November 2026: **55 stories across 9 regions**,
+in a tokenised, picture-first layout — no body text, just illustration, a one-line
+headline and number / proper-noun tokens per story.
 
-The day's top stories: the AI trade collapsed again as Nvidia fell 6% and the
-Nasdaq dropped 1.5% a day after Jensen Huang's return rally; Ukraine sank a
-Russian warship in a Libyan port in a strike far beyond the Black Sea; and
-Pakistan Air Force pilot Muhammad Zeeshan Ali became the first foreign
-astronaut aboard China's Tiangong station, launching on Shenzhou-24.
+## The day, at a glance
 
-## What's in the image
+- **Heroes** — the US unveils new tariffs on 14 trading partners (China at 20%);
+  the AI rout, with the Nasdaq plunging 4.6% intraday before clawing back; and
+  Shenzhou-24 carrying Pakistan's first astronaut, Muhammad Zeeshan Ali, to
+  China's Tiangong station — the first foreign astronaut aboard it.
+- **Numbers band** — 14 tariffed partners · −4.6% Nasdaq · ≈500,000 Russian war
+  dead in Moscow's own figures · 31 killed in the Cairo tanker fire · 76 hostages
+  freed in Cartagena · 5 tons of lead azide blown up in Iowa · 3.8% US inflation ·
+  13,000 ha burned in the Flinders Island bushfire.
+- **Tiles** — Huawei found guilty of stealing US trade secrets; Netanyahu's judges
+  urging the gravest charges be dropped; a Gaza strike killing a Hamas security
+  chief; the Macy's parade postponed; North Korea expelling a Swiss diplomat;
+  the Solomon Islands swapping a China pact for an Australian treaty; Champions
+  League night (Liverpool 3–0, Barça 4–1, Bayern beaten); Poundland collapsing;
+  Ramaphosa winning his court battle; a Houthi drone hitting a Riyadh tower;
+  Merz warning that Russia wants more than Ukraine; Bolsonaro fleeing Brazil;
+  23 miners trapped in a West Java flood.
+- **Chips** — 35 more stories, from Ábrego García landing in Spain to Laos
+  shedding its "least developed" label.
+- **UTC timeline** — 00:18 Shenzhou-24 lifts off → 03:56 docks at Tiangong →
+  13:30 US inflation data → 16:21 tariff plan unveiled → 19:47 Netanyahu
+  charges → 22:06 Gaza strike → 22:46 five Russian jets hit → 23:41 an
+  astronaut's baby is born from orbit.
 
-- **53 stories across 9 regions** — North America, Latin America, Europe,
-  Britain, the Middle East, Africa, South Asia, East Asia, and
-  Oceania & South-East Asia. Each region keeps one fixed colour all day, so
-  colour itself tells you where a story happened.
-- **3 hero stories** at the top, a **numbers band** with the day's six
-  biggest figures (490,000 Russian troops reported killed; 570,000 AIDS
-  deaths in 2025, a 20-year low; 7,000 landmine casualties; Brent at $90.97),
-  12 illustrated tiles, and 38 region-coloured chips.
-- A **UTC timeline strip** running from the 00:18 Shenzhou-24 liftoff to
-  Tuesday's 21:00 UTC Nasdaq close.
+## Design
 
-## How it works
+- One fixed tint per region (see the legend tile); no borders or rules between
+  stories — whitespace and tinted panels only.
+- The date **25 NOVEMBER 2026** dominates the masthead; masthead, hero
+  headlines, tokens and the numbers band stay readable at 300 px.
+- Every story is an event that happened or was first reported on 25 November
+  2026, checked against Reuters, AP, BBC and The Guardian wires.
 
-- `poster.html` is the poster source; `render.mjs` renders it to
-  `entry.png` (1024×1024) with a headless Chromium:
-  `node render.mjs`
-- `main.py` (Python 3, standard library only, no network) copies the bundled
-  `entry.png` to the output location — `--output <path>` if given, else
-  `$MAKEFUN_OUTPUT_DIR/entry.png`, else `/output/entry.png` — and sets it
-  readable (0644). The copy is byte-for-byte, so every run is identical.
+## Files
+
+- `poster.html` — the poster source (HTML/CSS/inline SVG, no network at render time)
+- `render.mjs` — renders `poster.html` to `entry.png` at 1024×1024 with the
+  headless-shell Chromium (Node built-ins only)
+- `entry.png` — the entry image, 1024×1024, ≤ 1 MiB
+- `main.py` — stdlib-only copier: copies `entry.png` to `$MAKEFUN_OUTPUT_DIR/entry.png`
+  (or `--output`, falling back to `/output/entry.png`), chmod 0644
 
 ## Licence
 

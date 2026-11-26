@@ -1,37 +1,39 @@
-// Render poster.html to entry.png at exactly 1024x1024 using headless Chromium.
-// Deterministic: fixed window size, no scrollbars, no network (file:// only).
+// render.mjs — renders poster.html to entry.png (1024x1024) with the
+// headless-shell Chromium bundled under ~/.cache/puppeteer.
+// Node built-ins only; no network, no extra packages.
 import { execFileSync } from "node:child_process";
-import { fileURLToPath } from "node:url";
+import { existsSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
-import { existsSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 
-const here = dirname(fileURLToPath(import.meta.url));
-const html = join(here, "poster.html");
-const out = join(here, "entry.png");
+const dir = dirname(fileURLToPath(import.meta.url));
+const html = join(dir, "poster.html");
+const out = join(dir, "entry.png");
 
-const candidates = [
-  process.env.CHROME_BIN,
-  `${process.env.HOME}/.cache/puppeteer/chrome-headless-shell/linux-158.0.8127.36/chrome-headless-shell-linux64/chrome-headless-shell`,
-  "/opt/meta-chromium/chrome",
-  "/usr/bin/chromium",
-  "/usr/bin/chromium-browser",
-  "/usr/bin/google-chrome",
-].filter(Boolean);
-const chrome = candidates.find((p) => existsSync(p));
-if (!chrome) {
-  console.error("No Chromium binary found");
-  process.exit(1);
+function findChrome() {
+  if (process.env.CHROME_BIN && existsSync(process.env.CHROME_BIN)) {
+    return process.env.CHROME_BIN;
+  }
+  const home = process.env.HOME || "";
+  const base = join(home, ".cache", "puppeteer", "chrome-headless-shell");
+  if (!existsSync(base)) throw new Error("no chrome-headless-shell cache found");
+  const versions = readdirSync(base).sort().reverse();
+  for (const v of versions) {
+    const p = join(base, v, "chrome-headless-shell-linux64", "chrome-headless-shell");
+    if (existsSync(p)) return p;
+  }
+  throw new Error("chrome-headless-shell binary not found under " + base);
 }
 
+const chrome = findChrome();
 execFileSync(chrome, [
-  "--headless=new",
+  "--headless",
   "--disable-gpu",
   "--no-sandbox",
   "--hide-scrollbars",
   "--force-device-scale-factor=1",
   "--window-size=1024,1024",
-  `--screenshot=${out}`,
-  `file://${html}`,
+  "--screenshot=" + out,
+  "file://" + html,
 ], { stdio: "inherit" });
-
-console.log(`Wrote ${out}`);
+console.log("wrote " + out);

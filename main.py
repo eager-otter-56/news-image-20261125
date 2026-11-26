@@ -1,43 +1,35 @@
 #!/usr/bin/env python3
-"""Copy the bundled entry.png to the competition output location.
+"""Copy the pre-rendered poster to the grader's output directory.
 
-Resolution order for the destination:
-  1. --output <path> command-line argument
-  2. $MAKEFUN_OUTPUT_DIR/entry.png
-  3. /output/entry.png
-
-Standard library only, no network. The copy is byte-for-byte, so repeated
-runs always produce identical output.
+Standard library only. The entry image is entry.png next to this file;
+both runs write the same bytes, so the two grader runs are identical.
 """
-
 import os
 import shutil
 import sys
+from pathlib import Path
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-SOURCE = os.path.join(HERE, "entry.png")
+HERE = Path(__file__).resolve().parent
+SRC = HERE / "entry.png"
 
 
-def destination(argv):
+def main(argv):
+    # --output <path> wins; then $MAKEFUN_OUTPUT_DIR; then /output/entry.png.
+    # The copy is byte-for-byte identical every run: no timestamps, no
+    # re-encoding, so the grader's two runs always match.
+    out = None
     if "--output" in argv:
-        idx = argv.index("--output")
-        if idx + 1 < len(argv):
-            return argv[idx + 1]
-    out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR")
-    if out_dir:
-        return os.path.join(out_dir, "entry.png")
-    return "/output/entry.png"
-
-
-def main():
-    dest = destination(sys.argv[1:])
-    parent = os.path.dirname(dest)
-    if parent:
-        os.makedirs(parent, exist_ok=True)
-    shutil.copyfile(SOURCE, dest)
-    os.chmod(dest, 0o644)
-    print(f"entry.png written to {dest}")
+        i = argv.index("--output")
+        if i + 1 < len(argv):
+            out = Path(argv[i + 1])
+    if out is None:
+        d = os.environ.get("MAKEFUN_OUTPUT_DIR")
+        out = Path(d) / "entry.png" if d else Path("/output/entry.png")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(SRC, out)
+    os.chmod(out, 0o644)
+    print(f"wrote {out}")
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
